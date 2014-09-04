@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/!svn/ver/958069/wp-rss-multi-importer/trunk/inc
+END
+rss_feed.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/rss_feed.php
+END
+ftp_list_table.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/ftp_list_table.php
+END
+options.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/options.php
+END
+textbox-to-db.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/textbox-to-db.php
+END
+cron.php
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/!svn/ver/976544/wp-rss-multi-importer/trunk/inc/cron.php
+END
+excerpt_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/excerpt_functions.php
+END
+import_posts.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/import_posts.php
+END
+custom_posts.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/976544/wp-rss-multi-importer/trunk/inc/custom_posts.php
+END
+template_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/template_functions.php
+END
+rss_multi_importer_widget.php
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/rss_multi_importer_widget.php
+END
+diagnostics.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/diagnostics.php
+END
+admin_init.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/admin_init.php
+END
+db_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/db_functions.php
+END
+global_settings.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/global_settings.php
+END
+admin_functions.php
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/admin_functions.php
+END
+import_feeds.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/import_feeds.php
+END
+export.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/export.php
+END
+panel_messages.php
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/panel_messages.php
+END
+upgrade.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/976190/wp-rss-multi-importer/trunk/inc/upgrade.php
+END
+scripts.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/!svn/ver/964637/wp-rss-multi-importer/trunk/inc/scripts.php
+END
