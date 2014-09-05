@@ -878,6 +878,7 @@ wp_rss_multi_deactivation(1);
 <OPTION VALUE="image" <?php if($post_options['post_format']=="image"){echo 'selected';} ?>>Image</OPTION>
 <OPTION VALUE="quote" <?php if($post_options['post_format']=="quote"){echo 'selected';} ?>>Quote</OPTION>
 <OPTION VALUE="status" <?php if($post_options['post_format']=="status"){echo 'selected';} ?>>Status</OPTION>
+<OPTION VALUE="video" <?php if($post_options['post_format']=="video"){echo 'selected';} ?>>Video</OPTION>
 </SELECT></p>
 
 
