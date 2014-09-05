@@ -75,5 +75,4 @@ function rssmi_is_not_fresh( $date ) {
 	else {
 		return 0;
 	}
-
 }
