@@ -82,8 +82,8 @@ function rssmi_schedule_import_feeds(){
 			case 3: $feed_display_period='fifteenminutes'; break;
 			case 4: $feed_display_period='twentyminutes'; break;
 			case 5: $feed_display_period='thirtyminutes'; break;
-			case 6: $display_period='twohours'; break;
-			case 7: $display_period='fourhours'; break;
+			case 6: $feed_display_period='twohours'; break;
+			case 7: $feed_display_period='fourhours'; break;
 			case 12: $feed_display_period='twicedaily'; break;
 			case 24: $feed_display_period='daily'; break;
 			case 168: $feed_display_period='weekly'; break;
