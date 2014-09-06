@@ -245,7 +245,7 @@ function find_db_transients() {
 }
 
 
-register_deactivation_hook(__FILE__, 'wp_rss_multi_deactivation');
+
 
 function wp_rss_multi_deactivation($hook_event) {
 	if ($hook_event==1){
