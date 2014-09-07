@@ -148,8 +148,14 @@ function rssmi_schedule_import_feeds() {
 add_action( 'init', 'rssmi_schedule_import_feeds' );
 
 
-
-function cron_add_wprssmi_schedule( $schedules ) { //add a weekly schedule to cron
+/**
+ * Add a weekly schedule to cron
+ *
+ * @param $schedules
+ *
+ * @return mixed
+ */
+function cron_add_wprssmi_schedule( $schedules ) {
 
 	$period              = 168 * 3600;
 	$schedules['weekly'] = array(
@@ -162,8 +168,14 @@ function cron_add_wprssmi_schedule( $schedules ) { //add a weekly schedule to cr
 add_filter( 'cron_schedules', 'cron_add_wprssmi_schedule' );
 
 
-
-function cron_add_wprssmi_schedule_10( $schedules ) { //add a 10 min schedule to cron
+/**
+ * Add a 10 min schedule to cron
+ *
+ * @param $schedules
+ *
+ * @return mixed
+ */
+function cron_add_wprssmi_schedule_10( $schedules ) {
 
 	$period                  = 600;
 	$schedules['tenminutes'] = array(
@@ -176,8 +188,14 @@ function cron_add_wprssmi_schedule_10( $schedules ) { //add a 10 min schedule to
 add_filter( 'cron_schedules', 'cron_add_wprssmi_schedule_10' );
 
 
-
-function cron_add_wprssmi_schedule_15( $schedules ) { //add a 15 min schedule to cron
+/**
+ * Add a 15 min schedule to cron
+ *
+ * @param $schedules
+ *
+ * @return mixed
+ */
+function cron_add_wprssmi_schedule_15( $schedules ) {
 
 	$period                      = 900;
 	$schedules['fifteenminutes'] = array(
@@ -190,8 +208,14 @@ function cron_add_wprssmi_schedule_15( $schedules ) { //add a 15 min schedule to
 add_filter( 'cron_schedules', 'cron_add_wprssmi_schedule_15' );
 
 
-
-function cron_add_wprssmi_schedule_20( $schedules ) { //add a 20 min schedule to cron
+/**
+ * Add a 20 min schedule to cron
+ *
+ * @param $schedules
+ *
+ * @return mixed
+ */
+function cron_add_wprssmi_schedule_20( $schedules ) {
 
 	$period                     = 1200;
 	$schedules['twentyminutes'] = array(
@@ -204,9 +228,14 @@ function cron_add_wprssmi_schedule_20( $schedules ) { //add a 20 min schedule to
 add_filter( 'cron_schedules', 'cron_add_wprssmi_schedule_20' );
 
 
-
-
-function cron_add_wprssmi_schedule_30( $schedules ) { //add a 30 min schedule to cron
+/**
+ * Add a 30 min schedule to cron
+ *
+ * @param $schedules
+ *
+ * @return mixed
+ */
+function cron_add_wprssmi_schedule_30( $schedules ) {
 
 	$period                     = 1800;
 	$schedules['thirtyminutes'] = array(
@@ -219,8 +248,14 @@ function cron_add_wprssmi_schedule_30( $schedules ) { //add a 30 min schedule to
 add_filter( 'cron_schedules', 'cron_add_wprssmi_schedule_30' );
 
 
-
-function cron_add_wprssmi_schedule_120( $schedules ) { //add a 2 hourly schedule to cron
+/**
+ * Add a 2 hourly schedule to cron
+ *
+ * @param $schedules
+ *
+ * @return mixed
+ */
+function cron_add_wprssmi_schedule_120( $schedules ) {
 
 	$period                = 7200;
 	$schedules['twohours'] = array(
@@ -233,8 +268,14 @@ function cron_add_wprssmi_schedule_120( $schedules ) { //add a 2 hourly schedule
 add_filter( 'cron_schedules', 'cron_add_wprssmi_schedule_120' );
 
 
-
-function cron_add_wprssmi_schedule_240( $schedules ) { //add a 4 hourly schedule to cron
+/**
+ * Aadd a 4 hourly schedule to cron
+ *
+ * @param $schedules
+ *
+ * @return mixed
+ */
+function cron_add_wprssmi_schedule_240( $schedules ) {
 
 	$period                 = 14400;
 	$schedules['fourhours'] = array(
