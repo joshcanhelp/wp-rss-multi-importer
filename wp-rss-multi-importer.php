@@ -98,6 +98,15 @@ require_once( WP_RSS_MULTI_INC . 'global_settings.php' );
 
 register_activation_hook( __FILE__, 'wp_rss_multi_importer_activate' );
 
+register_deactivation_hook(__FILE__, 'wp_rss_multi_deactivation_event');
+
+function wp_rss_multi_deactivation_event(){
+	wp_clear_scheduled_hook('wp_rss_multi_event_importfeeds');
+	wp_clear_scheduled_hook('wp_rss_multi_event_feedtopost');
+	wp_clear_scheduled_hook('wp_rss_multi_event_delete_custom_posts');
+	wp_clear_scheduled_hook('wp_rss_multi_event');
+}
+
 
 function rssmi_plugin_update_info() {
 	if ( rssmi_remoteFileExists( "http://www.wprssimporter.com/a/plugin-updates.txt" ) === True ) {
