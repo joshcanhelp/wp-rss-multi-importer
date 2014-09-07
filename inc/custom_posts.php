@@ -9,7 +9,6 @@ function create_rssmi_feed() {
 	$feed_args = array(
 		'public'              => true,
 		'query_var'           => 'feed_source',
-		'menu_position'       => 100,
 		'exclude_from_search' => true,
 		'show_in_menu'        => false,
 		'show_in_nav_menus'   => false,
@@ -30,7 +29,6 @@ function create_rssmi_feed() {
 			'search_items'       => __( 'Search Feeds', 'wp-rss-multi-importer' ),
 			'not_found'          => __( 'No Feed Sources Found', 'wp-rss-multi-importer' ),
 			'not_found_in_trash' => __( 'No Feed Sources Found In Trash', 'wp-rss-multi-importer' ),
-			'menu_name'          => __( 'RSS Multi Importer', 'wp-rss-multi-importer' )
 		),
 	);
 
@@ -40,8 +38,8 @@ function create_rssmi_feed() {
 	$feed_item_args = array(
 		'public'              => true,
 		'query_var'           => 'feed_item',
-		'show_in_menu'        => false,
 		'exclude_from_search' => true,
+		'show_in_menu'        => false,
 		'show_in_nav_menus'   => false,
 		'rewrite'             => array(
 			'slug'       => 'feeds/items',
