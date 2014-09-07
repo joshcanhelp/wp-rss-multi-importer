@@ -1,9 +1,11 @@
 <?php
-add_action( 'init', 'create_rssmi_feed' );
 
+/**
+ * Create the 2 custom post types
+ */
 function create_rssmi_feed() {
 
-
+	// RSS Feeds
 	$feed_args = array(
 		'public'              => true,
 		'query_var'           => 'feed_source',
@@ -17,25 +19,24 @@ function create_rssmi_feed() {
 			'with_front' => false
 		),
 		'labels'              => array(
-			'name'               => __( 'Multi Importer - Feed List' ),
-			'singular_name'      => __( 'Feed' ),
-			'add_new'            => __( 'Add New Feed Source' ),
-			'all_items'          => __( 'View Feed Sources' ),
-			'add_new_item'       => __( 'Add New Feed Source' ),
-			'edit_item'          => __( 'Edit Feed Source' ),
-			'new_item'           => __( 'New Feed Source' ),
-			'view_item'          => __( 'View Feed Source' ),
-			'search_items'       => __( 'Search Feeds' ),
-			'not_found'          => __( 'No Feed Sources Found' ),
-			'not_found_in_trash' => __( 'No Feed Sources Found In Trash' ),
-			'menu_name'          => __( 'RSS Multi Importer' )
+			'name'               => __( 'Multi Importer - Feed List', 'wp-rss-multi-importer' ),
+			'singular_name'      => __( 'Feed', 'wp-rss-multi-importer' ),
+			'add_new'            => __( 'Add New Feed Source', 'wp-rss-multi-importer' ),
+			'all_items'          => __( 'View Feed Sources', 'wp-rss-multi-importer' ),
+			'add_new_item'       => __( 'Add New Feed Source', 'wp-rss-multi-importer' ),
+			'edit_item'          => __( 'Edit Feed Source', 'wp-rss-multi-importer' ),
+			'new_item'           => __( 'New Feed Source', 'wp-rss-multi-importer' ),
+			'view_item'          => __( 'View Feed Source', 'wp-rss-multi-importer' ),
+			'search_items'       => __( 'Search Feeds', 'wp-rss-multi-importer' ),
+			'not_found'          => __( 'No Feed Sources Found', 'wp-rss-multi-importer' ),
+			'not_found_in_trash' => __( 'No Feed Sources Found In Trash', 'wp-rss-multi-importer' ),
+			'menu_name'          => __( 'RSS Multi Importer', 'wp-rss-multi-importer' )
 		),
 	);
 
-
 	register_post_type( 'rssmi_feed', $feed_args );
 
-
+	// RSS Feed Items
 	$feed_item_args = array(
 		'public'              => true,
 		'query_var'           => 'feed_item',
@@ -47,36 +48,39 @@ function create_rssmi_feed() {
 			'with_front' => false,
 		),
 		'labels'              => array(
-			'name'               => __( 'Multi Importer Feed Items' ),
-			'singular_name'      => __( 'Feed Items' ),
-			'all_items'          => __( 'Feed Items' ),
-			'view_item'          => __( 'View Feed Items' ),
-			'search_items'       => __( 'Search Feed Items' ),
-			'not_found'          => __( 'No Imported Feeds Found' ),
-			'not_found_in_trash' => __( 'No Imported Feeds Found In Trash' )
+			'name'               => __( 'Multi Importer Feed Items', 'wp-rss-multi-importer' ),
+			'singular_name'      => __( 'Feed Items', 'wp-rss-multi-importer' ),
+			'all_items'          => __( 'Feed Items', 'wp-rss-multi-importer' ),
+			'view_item'          => __( 'View Feed Items', 'wp-rss-multi-importer' ),
+			'search_items'       => __( 'Search Feed Items', 'wp-rss-multi-importer' ),
+			'not_found'          => __( 'No Imported Feeds Found', 'wp-rss-multi-importer' ),
+			'not_found_in_trash' => __( 'No Imported Feeds Found In Trash', 'wp-rss-multi-importer' )
 		),
 	);
 
-	// Register the 'feed_item' post type
 	register_post_type( 'rssmi_feed_item', $feed_item_args );
 }
 
-add_action( 'admin_init', 'rssmi_my_admin' );
+add_action( 'init', 'create_rssmi_feed' );
 
-function remove_publish_box() {
+
+/**
+ * Remove the publish box from RSS Feed edit page
+ */
+function rssmi_remove_publish_box() {
 	remove_meta_box( 'submitdiv', 'rssmi_feed', 'side' );
-
-
 }
 
-add_action( 'admin_menu', 'remove_publish_box' );
+add_action( 'admin_menu', 'rssmi_remove_publish_box' );
 
 
-add_filter( 'manage_edit-rssmi_feed_columns', 'rssmi_set_custom_columns' );
-/*
-	Set up the custom columns for the list
-
-	*/
+/**
+ * Display custom columns for RSS Feeds
+ *
+ * @param $columns
+ *
+ * @return array
+ */
 function rssmi_set_custom_columns( $columns ) {
 
 	$columns = array(
@@ -92,25 +96,15 @@ function rssmi_set_custom_columns( $columns ) {
 	return $columns;
 }
 
-
-add_action( 'admin_head', 'rssmi_feed_column_width' );
-
-function rssmi_feed_column_width() {
-	echo '<style type="text/css">';
-	echo '.column-title {width:280px !important;  }';
-	echo '.column-url {width:280px !important;  }';
-	echo '.column-bloguser {width:120px !important;  }';
-//	echo 'th.column-feeditems {font-size:12px !important;  }';
-	echo '.column-feeditems {text-align:center !important;  }';
-	echo '</style>';
-}
+add_filter( 'manage_edit-rssmi_feed_columns', 'rssmi_set_custom_columns' );
 
 
-add_action( "manage_rssmi_feed_posts_custom_column", "rssmi_show_custom_columns", 10, 2 );
-/*
-	Show up the custom columns for the  list
-
-	*/
+/**
+ * Display custom columns for RSS Feeds
+ *
+ * @param $column
+ * @param $post_id
+ */
 function rssmi_show_custom_columns( $column, $post_id ) {
 	global $wpdb;
 	switch ( $column ) {
@@ -147,11 +141,31 @@ function rssmi_show_custom_columns( $column, $post_id ) {
 	}
 }
 
-add_filter( 'manage_edit-rssmi_feed_sortable_columns', 'rssmi_sortable_columns' );
+add_action( "manage_rssmi_feed_posts_custom_column", "rssmi_show_custom_columns", 10, 2 );
 
-/*
-	* Make the custom columns sortable
-	*/
+
+/**
+ * Set custom CSS for feed columns
+ * TODO: CSS should be more specific and included in the main CSS sheet
+ */
+function rssmi_feed_column_width() {
+	echo '<style type="text/css">';
+	echo '.column-title {width:280px !important;  }';
+	echo '.column-url {width:280px !important;  }';
+	echo '.column-bloguser {width:120px !important;  }';
+//	echo 'th.column-feeditems {font-size:12px !important;  }';
+	echo '.column-feeditems {text-align:center !important;  }';
+	echo '</style>';
+}
+
+add_action( 'admin_head', 'rssmi_feed_column_width' );
+
+
+/**
+ * Make the custom columns sortable
+ *
+ * @return array
+ */
 function rssmi_sortable_columns() {
 	return array(
 		// meta column id => sortby value used in query
@@ -159,6 +173,8 @@ function rssmi_sortable_columns() {
 		'category' => 'category'
 	);
 }
+
+add_filter( 'manage_edit-rssmi_feed_sortable_columns', 'rssmi_sortable_columns' );
 
 
 add_filter( 'manage_edit-rssmi_feed_item_columns', 'rssmi_set_feed_item_custom_columns' );
@@ -761,6 +777,7 @@ function rssmi_remove_meta_boxes() {
 
 
 add_filter( 'gettext', 'rssmi_change_publish_button', 10, 2 );
+
 /**
  * Change 'Publish' button text
  */
@@ -779,6 +796,8 @@ function rssmi_my_admin() {
 		'display_rssmi_feed_meta_box',
 		'rssmi_feeds', 'normal', 'high' );
 }
+
+add_action( 'admin_init', 'rssmi_my_admin' );
 
 function display_rssmi_feed_meta_box( $rssmi_feed ) {
 	echo '<input type="hidden" name="rssmi_meta_box_nonce" value="' . wp_create_nonce( basename( __FILE__ ) ) . '" />';
