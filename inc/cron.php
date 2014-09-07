@@ -64,6 +64,8 @@ function rssmi_schedule_autopost() {
 			case 168:
 				$display_period = 'weekly';
 				break;
+			default:
+				$display_period = 'weekly';
 		}
 
 
