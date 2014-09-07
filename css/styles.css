@@ -328,3 +328,8 @@ div.rssmi-upgrade {
 	margin:0 0 0 0 !important;
 	background-color:#FFFFFF !important;
 }
+
+.icon32-posts-rssmi_feed,
+.icon32-posts-rssmi_feed_item {
+	background: transparent url('../images/RSSadmin32.png' ) no-repeat left top !important;
+}
