@@ -121,10 +121,14 @@ function wp_rss_multi_importer_menu() {
 	add_submenu_page( $parent_slug, 'Start Here', '<span style="color:' . $menuColor . '">' . 'Start Here' . '</span>', 'manage_options', $parent_slug, 'wp_rss_multi_importer_intro_page', '', '' );
 
 	add_submenu_page( $parent_slug, 'Feed List', 'Feed List', 'manage_options', 'edit.php?post_type=rssmi_feed', '' );
+	
+	add_submenu_page( $parent_slug, 'Add a Feed', 'Add a Feed', 'edit_posts', 'post-new.php?post_type=rssmi_feed', '' );
 
 	add_submenu_page( $parent_slug, 'Upload Feeds', 'Upload Feeds', 'manage_options', 'wprssmi_options8', 'wp_rss_multi_importer_upload_page' );
 
 	add_submenu_page( $parent_slug, 'Categories', 'Categories', 'manage_options', 'wprssmi_options', 'rssmi_category_pages', '' );
+	
+	add_submenu_page( $parent_slug, 'Feed Items', 'Feed Items', 'edit_posts', 'edit.php?post_type=rssmi_feed_item', '' );
 
 	add_submenu_page( $parent_slug, 'Global Settings', 'Global Settings', 'manage_options', 'wprssmi_options5', 'wp_rss_multi_importer_dateformat_page' );
 
@@ -137,9 +141,8 @@ function wp_rss_multi_importer_menu() {
 	add_submenu_page( $parent_slug, 'Diagnostics', 'Diagnostics', 'manage_options', 'wprssmi_options9', 'wp_rss_multi_importer_diagnostics' );
 
 	// All submenu Feed Items pages
-	add_submenu_page( $parent_slug, 'Add a Feed', 'Add a Feed', 'edit_posts', 'post-new.php?post_type=rssmi_feed', '' );
 
-	add_submenu_page( $parent_slug, 'Feed Items', 'Feed Items', 'edit_posts', 'edit.php?post_type=rssmi_feed_item', '' );
+
 
 	//	add_submenu_page( 'wprssmi', 'Settings', '<span style="color:#2ea2cc">'.'Settings'.'</span>', 'manage_options', 'wprssmi_options2', 'wp_rss_multi_importer_display' );
 
