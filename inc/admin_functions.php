@@ -62,7 +62,7 @@ function rssmi_show_last_feed_update() {
 function rssmi_is_not_fresh( $date ) {
 	$rssmi_global_options = get_option( 'rssmi_global_options' );
 	$days                 = round( abs( strtotime( $date ) - strtotime( 'now' ) ) / 86400 );
-	if ( isset( $rssmi_global_options['item_freshness'] ) ) {
+	if ( isset( $rssmi_global_options['item_freshness'] ) && $rssmi_global_options['item_freshness']>0 ) {
 		$day_cutoff = $rssmi_global_options['item_freshness'];
 
 		if ( $days >= $day_cutoff ) {
