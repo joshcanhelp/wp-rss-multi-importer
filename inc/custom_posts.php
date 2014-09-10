@@ -35,6 +35,7 @@ function create_rssmi_feed() {
 	register_post_type( 'rssmi_feed', $feed_args );
 
 	// RSS Feed Items
+	// TODO: Disallow adding new with capabilities
 	$feed_item_args = array(
 		'public'              => true,
 		'query_var'           => 'feed_item',
