@@ -355,6 +355,7 @@ function rssmi_save_feed_source_meta_box() {
 									<a class="submitdelete deletion" href="' . get_delete_post_link( $post->ID ) . '">' . $delete_text . '</a>
 								</div>
 								<div class="clear"></div>
+								<p><strong>Please read the note below before deleting this feed.</strong></p>
 							</div>
 						</div>
 						';
@@ -366,9 +367,7 @@ function rssmi_save_feed_note_meta_box() {
 	global $post;
 	if ( current_user_can( "delete_post", $post->ID ) ) {
 
-		if ( EMPTY_TRASH_DAYS ) {
-			echo '<strong>Important:</strong> If you move a feed to trash, you must make sure it is deleted permanently before the items associated with that feed will be deleted.  Go to the Feed List, check for feeds in trash and delete permanently.';
-		}
+		echo '<strong>Important:</strong> Deleting a feed will also delete all of the associated feed items and auto-posts as well. If you move a feed to trash, these will remain until the feed is deleted permanently. To delete the feed and all items immediately, go to <strong>Multi Importer > Feed List</strong>, click the Trash link near the top, then click the <strong>Empty Trash</strong> button.';
 	}
 }
 

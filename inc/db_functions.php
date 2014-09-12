@@ -74,6 +74,7 @@ function rssmi_delete_attachment( $pid ) {
 	}
 }
 
+
 /**
  * Timed delete of Auto Posts from import_posts.php
  */
@@ -109,21 +110,21 @@ function rssmi_delete_posts() {
 		$date_query                            = TRUE;
 		$delete_posts_args['suppress_filters'] = TRUE;
 		$delete_posts_args['date_query']       = array(
-			'before' => '-' . $expiration . ' days'
+			'before' => $expiration . ' days ago'
 		);
 	}
 	// Otherwise, need to filter the WHERE clause
 	else {
 		$date_query                            = FALSE;
 		$delete_posts_args['suppress_filters'] = FALSE;
-		add_filter( 'posts_where', 'rssmi_filter_expiration_posts_where', 10 );
+		add_filter( 'posts_where', 'rssmi_delete_posts_filter_posts_where', 10 );
 	}
 
 	$delete_posts = get_posts( $delete_posts_args );
 
 	// Remove the filter, if added
 	if ( ! $date_query ) {
-		remove_filter( 'posts_where', 'rssmi_filter_expiration_posts_where', 10 );
+		remove_filter( 'posts_where', 'rssmi_delete_posts_filter_posts_where', 10 );
 	}
 
 	// No posts? Nothing to do...
@@ -169,7 +170,6 @@ function rssmi_delete_posts() {
 				) );
 				break;
 		}
-
 	}
 }
 
@@ -180,148 +180,283 @@ function rssmi_delete_posts() {
  *
  * @return string
  */
-function rssmi_filter_expiration_posts_where( $where ) {
+function rssmi_delete_posts_filter_posts_where( $where ) {
 
 	$options = get_option( 'rss_post_options' );
 
 	// If no expiration is set, do nothing
 	if ( ! empty( $options['expiration'] ) ) {
 		$expiration = intval( $options['expiration'] );
-		$where .= " AND post_date < '" . date( 'Y-m-d 00:00:00', strtotime( '-' . $expiration . ' days' ) ) . "'";
+		$where .= " AND post_date < '" . date( 'Y-m-d H:i:s', strtotime( '-' . $expiration . ' days' ) ) . "'";
 	}
 
 	return $where;
 }
 
 
-function rssmi_delete_custom_posts() { // TIMED DELETE ITEMS USED FOR FEED ITEMS
+/**
+ * Timed delete for RSS Feed Items
+ */
+function rssmi_delete_custom_posts() {
 
-	global $wpdb;
-	$custom_post_options_delete = get_option( 'rssmi_global_options' );
-	$post_options               = get_option( 'rss_post_options' );
-	$expiration                 = $custom_post_options_delete['expiration'];
-	$serverTimezone             = $post_options['timezone'];
+	$wp_version = (float) get_bloginfo( 'version' );
+	$options = get_option( 'rssmi_global_options' );
 
+	// Expiration not set or set to "0" (never delete)
+	if ( empty( $options['expiration'] ) ) {
+		return;
+	}
+	$expiration = intval( $options['expiration'] );
 
-	if ( isset( $serverTimezone ) && $serverTimezone != '' ) {
-		date_default_timezone_set( $serverTimezone );
+	// Default arguments
+	$delete_posts_args = array(
+		'post_type'      => 'rssmi_feed_item',
+		'posts_per_page' => - 1,
+		'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'private', 'inherit', 'trash' ),
+	);
+
+	// Use date_query if we're using a high enough version
+	if ( $wp_version >= 3.7 ) {
+		$date_query                            = TRUE;
+		$delete_posts_args['suppress_filters'] = TRUE;
+		$delete_posts_args['date_query']       = array(
+			'before' => $expiration . ' days ago'
+		);
+	}
+	// Otherwise, need to filter the WHERE clause
+	else {
+		$date_query                            = FALSE;
+		$delete_posts_args['suppress_filters'] = FALSE;
+		add_filter( 'posts_where', 'rssmi_delete_custom_posts_filter_posts_where', 10 );
 	}
 
-	if ( isset( $expiration ) && $expiration != 0 ) {
+	$delete_items = get_posts( $delete_posts_args );
 
-		$query = "SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_type = 'rssmi_feed_item' AND DATEDIFF(NOW(), `post_date`) > " . $expiration;
+	// Remove the filter, if added
+	if ( ! $date_query ) {
+		remove_filter( 'posts_where', 'rssmi_delete_custom_posts_filter_posts_where', 10 );
+	}
 
-
-		$ids = $wpdb->get_results( $query );
-//	var_dump($ids);
-//	exit;
-
-
-		if ( ! empty( $ids ) ) {
-			foreach ( $ids as $id ) {
-				wp_delete_post( $id->ID, true );
-			}
-
-		}
+	foreach ( $delete_items as $delete_me ) {
+		wp_delete_post( $delete_me->ID, TRUE );
 	}
 }
 
 
-function rssmi_delete_all_custom_posts() { // DELETE ALL FEED ITEMS
+/**
+ * Filter for expiration data added to SQL query
+ *
+ * @param $where
+ *
+ * @return string
+ */
+function rssmi_delete_custom_posts_filter_posts_where( $where ) {
 
-	global $wpdb;
+	$options = get_option( 'rssmi_global_options' );
 
-
-	$query = "SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_type = 'rssmi_feed_item'";
-
-
-	$ids = $wpdb->get_results( $query );
-	if ( ! empty( $ids ) ) {
-		foreach ( $ids as $id ) {
-			wp_delete_post( $id->ID, true );
-		}
-
+	// If no expiration is set, do nothing
+	if ( ! empty( $options['expiration'] ) ) {
+		$expiration = intval( $options['expiration'] );
+		$where .= " AND post_date < '" . date( 'Y-m-d', strtotime( '-' . $expiration . ' days' ) ) . "'";
 	}
 
+	return $where;
 }
 
 
-function rssmi_delete_autoposts() { //  USE FOR QUICK DELETE OF BLOG POSTS ONLY
+/**
+ * Delete all feed items
+ */
+function rssmi_delete_all_custom_posts() {
 
-	global $wpdb;
+	$delete_posts_args = array(
+		'post_type'      => 'rssmi_feed_item',
+		'posts_per_page' => - 1,
+		'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'private', 'inherit', 'trash' ),
+	);
 
-	$query = "SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_type != 'rssmi_feed'";
+	$delete_posts = get_posts( $delete_posts_args );
 
-	$ids = $wpdb->get_results( $query );
-
-	foreach ( $ids as $id ) {
-
-		$mypostids = $wpdb->get_results( "SELECT * FROM $wpdb->postmeta WHERE  meta_key = 'rssmi_source_link' AND post_id = " . $id->ID );
-
-		if ( ! empty( $mypostids ) ) {
-			rssmi_delete_attachment( $id->ID );
-			wp_delete_post( $id->ID, true );
-		}
+	if ( empty( $delete_posts ) ) {
+		return;
 	}
 
+	foreach ( $delete_posts as $delete_me ) {
+		wp_delete_post( $delete_me->ID, TRUE );
+	}
 }
 
+
+/**
+ * Deletes all auto-posts
+ */
+function rssmi_delete_autoposts() {
+
+	$options = get_option( 'rss_post_options' );
+
+	// Type of autoposts to delete
+	$post_type = 'post';
+	if ( ! empty( $options['custom_type_name'] ) ) {
+		$post_type = sanitize_text_field( $options['custom_type_name'] );
+	}
+
+	$delete_posts_args = array(
+		'post_type'      => $post_type,
+		'posts_per_page' => - 1,
+		'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'private', 'inherit', 'trash' ),
+		'meta_key' => 'rssmi_source_link',
+	);
+
+	$delete_posts = get_posts( $delete_posts_args );
+
+	if ( empty( $delete_posts ) ) {
+		return;
+	}
+
+	foreach ( $delete_posts as $delete_me ) {
+		$pid = $delete_me->ID;
+		rssmi_delete_attachment( $pid );
+		wp_delete_post( $pid, TRUE );
+	}
+}
+
+
+/**
+ * Hook function to delete all associated items and auto-posts for a certain feed
+ *
+ * @param $pid
+ */
+function rssmi_on_delete( $pid ) {
+	$post = get_post( $pid );
+	if ( 'rssmi_feed' === $post->post_type ) {
+		rssmi_delete_all_for_feed( $pid );
+		rssmi_delete_all_posts_for_feed( $pid );
+	}
+}
 
 add_action( 'delete_post', 'rssmi_on_delete' );
 
-function rssmi_on_delete( $post_id ) {
-	$post = get_post( $post_id );
-	if ( $post->post_type == 'rssmi_feed' ) {
-		rssmi_delete_all_for_feed( $post_id );
-		rssmi_delete_all_posts_for_feed( $post_id );
-	}
-}
+/**
+ * Delete all feed items for a specific feed
+ *
+ * @param $pid
+ */
+function rssmi_delete_all_for_feed( $pid ) {
 
+	$delete_posts_args = array(
+		'post_type'      => 'rssmi_feed_item',
+		'posts_per_page' => - 1,
+		'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'private', 'inherit', 'trash' ),
+		'meta_query'     => array(
+			array(
+				'key'   => 'rssmi_item_feed_id',
+				'value' => $pid
+			)
+		)
+	);
 
-function rssmi_delete_all_for_feed( $id ) { //  THIS DELETES FEED ITEMS FOR A SPECIFIC FEED ID
+	$delete_posts = get_posts( $delete_posts_args );
 
-	global $wpdb;
-
-	$myquery = "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'rssmi_item_feed_id' AND meta_value = " . $id;
-//	echo $myquery;
-
-	$myids = $wpdb->get_results( $myquery );
-
-	if ( ! empty( $myids ) ) {
-
-		foreach ( $myids as $id ) {
-			delete_post_meta( $id->post_id, "rssmi_item_date" );
-			delete_post_meta( $id->post_id, "rssmi_item_description" );
-			delete_post_meta( $id->post_id, "rssmi_item_feed_id" );
-			delete_post_meta( $id->post_id, "rssmi_item_permalink" );
-			rssmi_delete_attachment( $id->post_id );
-			wp_delete_post( $id->post_id, true );
-		}
-
+	if ( empty( $delete_posts ) ) {
+		return;
 	}
 
-}
-
-
-function rssmi_delete_all_posts_for_feed( $id ) { //  THIS DELETES AUTOPOSTS FOR A SPECIFIC FEED ID
-
-	global $wpdb;
-
-	$query = "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'rssmi_source_feed' and meta_value = " . $id;
-
-	$mypostids = $wpdb->get_results( $query );
-
-	if ( ! empty( $mypostids ) ) {
-		foreach ( $mypostids as $mypostid ) {
-			rssmi_delete_attachment( $mypostid->post_id );
-			wp_delete_post( $mypostid->post_id, true );
-		}
+	foreach ( $delete_posts as $delete_me ) {
+		$pid = $delete_me->ID;
+		rssmi_delete_attachment( $pid );
+		wp_delete_post( $pid, TRUE );
 	}
 
 }
 
 
-function rssmi_delete_posts_admin() { //  USE FOR QUICK DELETE OF ALL AUTOPOSTS
+/**
+ * Delete all auto-posts for a specific feed
+ *
+ * @param $pid
+ */
+function rssmi_delete_all_posts_for_feed( $pid ) {
+
+	$options = get_option( 'rss_post_options' );
+
+	// Type of autoposts to delete
+	$post_type = 'post';
+	if ( ! empty( $options['custom_type_name'] ) ) {
+		$post_type = sanitize_text_field( $options['custom_type_name'] );
+	}
+
+	$delete_posts_args = array(
+		'post_type'      => $post_type,
+		'posts_per_page' => - 1,
+		'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'private', 'inherit', 'trash' ),
+		'meta_query'     => array(
+			array(
+				'key'   => 'rssmi_source_feed',
+				'value' => $pid
+			)
+		)
+	);
+
+	$delete_posts = get_posts( $delete_posts_args );
+
+	if ( empty( $delete_posts ) ) {
+		return;
+	}
+
+	foreach ( $delete_posts as $delete_me ) {
+		$pid = $delete_me->ID;
+		rssmi_delete_attachment( $pid );
+		wp_delete_post( $pid, TRUE );
+	}
+
+}
+
+
+/**
+ * Deletes all content created by this plugin
+ */
+function rssmi_restore_all() {
+
+	rssmi_delete_autoposts();
+
+	$delete_posts_args = array(
+		'post_type'      => array( 'rssmi_feed_item', 'rssmi_feed' ),
+		'posts_per_page' => -1,
+		'post_status'    => array( 'publish', 'pending', 'draft', 'auto-draft', 'private', 'inherit', 'trash' ),
+	);
+
+	$delete_posts = get_posts( $delete_posts_args );
+
+	if ( empty( $delete_posts ) ) {
+		return;
+	}
+
+	foreach ( $delete_posts as $delete_me ) {
+		$pid = $delete_me->ID;
+		rssmi_delete_attachment( $pid );
+		wp_delete_post( $pid, TRUE );
+	}
+
+}
+
+/*
+ * DEPRECATED
+ */
+
+// TODO: Deprecate me, changed rssmi_delete_attachment() to process in-line
+function rssmi_change_post_status( $post_id, $status ) {
+
+	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
+
+	$current_post                = get_post( $post_id, 'ARRAY_A' );
+	$current_post['post_status'] = $status;
+	wp_update_post( $current_post );
+}
+
+// TODO: Deprecate me, replaced with rssmi_delete_autoposts()
+function rssmi_delete_posts_admin() {
+
+	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
 
 	global $wpdb;
 	$query = "SELECT * FROM $wpdb->postmeta WHERE meta_key = 'rssmi_source_link'";
@@ -333,40 +468,64 @@ function rssmi_delete_posts_admin() { //  USE FOR QUICK DELETE OF ALL AUTOPOSTS
 			wp_delete_post( $id->ID, true );
 		}
 	}
-
-
 }
 
+// TODO: Deprecate me, these transients are not being set
+function delete_db_transients() {
 
-function rssmi_delete_posts_admin_attachment( $postid ) { //  USE FOR  DELETE OF MANUALLY DELETED AUTOPOST ATTACHMENT
+	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
 
-	$ids = get_post_meta( $postid, 'rssmi_source_link', true );
-	if ( ! empty( $ids ) ) {
-		rssmi_delete_attachment( $postid );
-	}
-}
-
-
-function rssmi_restore_all() { //  DELETES EVERYTHING CAUSED BY THIS PLUGIN IN THE POST AND POST META TABLES
 	global $wpdb;
-	rssmi_delete_posts_admin();
+	$expired = $wpdb->get_col( "
+		SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_wprssmi_%';
+	" );
 
-	$query = "SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND (post_type = 'rssmi_feed_item' OR post_type = 'rssmi_feed')";
+	foreach ( $expired as $transient ) {
+		$key = str_replace( '_transient_', '', $transient );
+		delete_transient( $key );
+	}
+}
 
-	$ids = $wpdb->get_results( $query );
+// TODO: Deprecate me, unused
+function rssmi_list_the_plugins() {
 
-	if ( ! empty( $ids ) ) {
-		foreach ( $ids as $id ) {
-			rssmi_delete_attachment( $id->ID );
-			wp_delete_post( $id->ID, true );
-		}
+	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
 
+	$plugins = get_option( 'active_plugins', array() );
+	foreach ( $plugins as $plugin ) {
+		echo "<li>$plugin</li>";
+	}
+}
+
+// TODO: Deprecate me, unused
+function rssmi_list_options() {
+
+	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
+
+	$options = get_option( 'rss_import_options' );
+
+	foreach ( $options as $option ) {
+		echo "<li>$option</li>";
 	}
 
 }
 
+// TODO: Deprecate me, unused
+function rssmi_delete_posts_admin_attachment( $pid ) {
 
+	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
+
+	$rssmi_source_link = get_post_meta( $pid, 'rssmi_source_link', true );
+	if ( ! empty( $rssmi_source_link ) ) {
+		rssmi_delete_attachment( $rssmi_source_link );
+	}
+}
+
+// TODO: Deprecate me, unused
 function rssmi_delete_widow_links() {
+
+	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
+
 	global $wpdb;
 
 	$query = 'SELECT post_id from $wpdb->postmeta where (meta_key="rssmi_item_permalink" OR meta_key="rssmi_source_link")';
@@ -387,49 +546,4 @@ function rssmi_delete_widow_links() {
 
 		}
 	}
-
-}
-
-/*
- * DEPRECATED
- */
-
-// TODO: Deprecate me, these transients are not being set
-function delete_db_transients() {
-
-	global $wpdb;
-	$expired = $wpdb->get_col( "
-		SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_wprssmi_%';
-	" );
-
-	foreach ( $expired as $transient ) {
-		$key = str_replace( '_transient_', '', $transient );
-		delete_transient( $key );
-	}
-}
-
-// TODO: Deprecate me, unused
-function rssmi_list_the_plugins() {
-	$plugins = get_option( 'active_plugins', array() );
-	foreach ( $plugins as $plugin ) {
-		echo "<li>$plugin</li>";
-	}
-}
-
-// TODO: Deprecate me, unused
-function rssmi_list_options() {
-
-	$options = get_option( 'rss_import_options' );
-
-	foreach ( $options as $option ) {
-		echo "<li>$option</li>";
-	}
-
-}
-
-// TODO: Deprecate me, changed rssmi_delete_attachment() to process in-line
-function rssmi_change_post_status( $post_id, $status ) {
-	$current_post                = get_post( $post_id, 'ARRAY_A' );
-	$current_post['post_status'] = $status;
-	wp_update_post( $current_post );
 }
