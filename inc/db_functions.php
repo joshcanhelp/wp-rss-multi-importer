@@ -52,11 +52,33 @@ function upgradefeeds_callback_activate() {
 
 
 /**
+ * Hook action to delete attachments
+ *
+ * @param $pid
+ */
+function rssmi_delete_posts_admin_attachment( $pid ) {
+
+	$pid = intval( $pid );
+	if ( empty( $pid ) ) {
+		return;
+	}
+
+	if ( get_post_meta( $pid, 'rssmi_source_link', FALSE ) ) {
+		rssmi_delete_attachment( $pid );
+	}
+}
+
+/**
  * Delete the attachments of a parent post
  *
  * @param $pid
  */
 function rssmi_delete_attachment( $pid ) {
+
+	$pid = intval( $pid );
+	if ( empty( $pid ) ) {
+		return;
+	}
 
 	$attachments = get_children( array(
 		'post_type'      => 'attachment',
@@ -508,17 +530,6 @@ function rssmi_list_options() {
 		echo "<li>$option</li>";
 	}
 
-}
-
-// TODO: Deprecate me, unused
-function rssmi_delete_posts_admin_attachment( $pid ) {
-
-	trigger_error( "Deprecated function called: " . __FUNCTION__, E_USER_NOTICE );
-
-	$rssmi_source_link = get_post_meta( $pid, 'rssmi_source_link', true );
-	if ( ! empty( $rssmi_source_link ) ) {
-		rssmi_delete_attachment( $rssmi_source_link );
-	}
 }
 
 // TODO: Deprecate me, unused
