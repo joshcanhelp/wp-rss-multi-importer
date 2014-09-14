@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: rss, atom, feeds, aggregation, aggregator, import, syndication, autoblog, widget
 Requires at least: 3.3
 Tested up to: 3.9.2
-Stable tag: 3.12
+Stable tag: 3.13
 Aggregate RSS feeds. AutoPost or use shortcode, excerpts w/ images, 13 templates, categorize and more.
 
 == Description ==
@@ -115,9 +115,14 @@ Go here to find [__all FAQs__](http://www.wprssimporter.com/faqs/)
 
 == Changelog ==
 
-= Version 3.12 (2014-9-2) =
-* Fixed: Various bugs.
-* Enhanced: Now manually deleting posts caused the plugin will also delete its associated featured image.
+= Version 3.13 (2014-9-13) =
+* Fixed: Bug that would cause media images to disappear.
+
+= Version 3.12 (2014-9-13) =
+* Fixed: Various issues reported during the last few weeks.
+* Enhanced: Manually deleting posts caused by the plugin will now also delete its associated featured image.
+* Enhanced: Share on LinkedIn now added to social sharing option for AutoPost and default shortcode template.
+* NEW: Only bring in items newer than n number of days old.
 
 = Version 3.11 (2014-9-1) =
 * Fixed: Bugs due to plugin conflicts and clearing the cron scheduler.
