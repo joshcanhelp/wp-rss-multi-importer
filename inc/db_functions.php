@@ -53,6 +53,9 @@ function upgradefeeds_callback_activate() {
 
 /**
  * Hook action to delete attachments
+ * TODO: verify that this is needed and that it works as expected
+ *
+ * @hook: before_delete_post
  *
  * @param $pid
  */
@@ -67,6 +70,8 @@ function rssmi_delete_posts_admin_attachment( $pid ) {
 		rssmi_delete_attachment( $pid );
 	}
 }
+
+// add_action( 'before_delete_post', 'rssmi_delete_posts_admin_attachment' );
 
 /**
  * Delete the attachments of a parent post
@@ -99,6 +104,8 @@ function rssmi_delete_attachment( $pid ) {
 
 /**
  * Timed delete of Auto Posts from import_posts.php
+ *
+ * @called:
  */
 function rssmi_delete_posts() {
 

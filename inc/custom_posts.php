@@ -586,7 +586,8 @@ function rssmi_preview_meta_box() {
 			$feed = wp_rss_fetchFeed( $feed_url, 20, true, 0 );
 		}
 
-		if ( ! $feed->error() ) {
+
+		if ( ! is_wp_error( $feed ) && ( method_exists( $feed, 'error' ) && ! $feed->error() ) ) {
 			$items     = $feed->get_items();
 			$feedCount = count( $items );
 
@@ -617,10 +618,14 @@ function rssmi_preview_meta_box() {
 				echo "<br><strong>IMPORTANT</strong> - THIS FEED HAS NO IMAGES (AT LEAST NOT IN THE MOST RECENT 5 POSTS) - SO YOU WILL SEE NO IMAGES IN YOUR POSTS UNLESS YOU USE A DEFAULT CATEGORY IMAGE.";
 			}
 		}
-		else echo "<strong>Invalid feed URL</strong> - Validate the feed source URL by <a href=\"http://validator.w3.org/feed/check.cgi?url=" . $feed_url . "\" target=\"_blank\">clicking here</a> and if the feed is valid then  <a href=\"http://www.wprssimporter.com/faqs/im-told-the-feed-isnt-valid-or-working/\" target=\"_blank\">go here to learn more about what might be wrong</a>.";
+		else {
+			echo "<strong>Invalid feed URL</strong> - Validate the feed source URL by <a href=\"http://validator.w3.org/feed/check.cgi?url=" . $feed_url . "\" target=\"_blank\">clicking here</a> and if the feed is valid then  <a href=\"http://www.wprssimporter.com/faqs/im-told-the-feed-isnt-valid-or-working/\" target=\"_blank\">go here to learn more about what might be wrong</a>.";
+		}
 	}
-
-	else echo 'No feed URL defined yet';
+	// Empty feed_url
+	else {
+		echo 'No feed URL defined yet';
+	}
 }
 
 
@@ -1005,9 +1010,6 @@ function rssmi_delete_custom_fields( $postid ) {
 		wp_delete_post( $delete_item->post_id, true );
 	}
 }
-
-
-//add_action( 'before_delete_post', 'rssmi_delete_posts_admin_attachment' ); //this function in db_functions.php file
 
 
 add_filter( "manage_edit-rssmi_feed_item_sortable_columns", 'rssmi_shortcode_sortable_columns' );
