@@ -16,6 +16,7 @@ define( 'WP_RSS_MULTI_VERSION', 3.13 );
 define( 'WP_RSS_MULTI_PATH', plugin_dir_path( __FILE__ ) );
 
 /* Set constant url to the plugin directory. */
+
 define( 'WP_RSS_MULTI_URL', plugin_dir_url( __FILE__ ) );
 
 /* Set the constant path to the plugin's includes directory. */
