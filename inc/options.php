@@ -1697,7 +1697,7 @@ function wp_rss_multi_importer_post_page() {
 		<label class='o_textinput' for='autoDelete'><?php _e( "Check to Auto Remove Posts Created by this Plugin", 'wp-rss-multi-importer' ) ?>
 			<input type="checkbox" id="autoRemoveCB" Name="rss_post_options[autoDelete]" Value="1" <?php if ( isset( $post_options['autoDelete'] ) && $post_options['autoDelete'] == 1 ) {
 				echo 'checked="checked"';
-			} ?>></label> (<a href="/wp-admin/admin.php?page=wprssmi_options3&tab=manage_autoposts">Manage what posts to keep here.</a>)
+			} ?>></label> (<a href="<?php echo admin_url( 'admin.php?page=wprssmi_options3&tab=feed_to_post_options' ) ?>">Manage what posts to keep here.</a>)
 	</p>
 
 <span id="autoremoveposts" <?php if ( isset( $post_options['autoDelete'] ) && $post_options['autoDelete'] != 1 ) {
