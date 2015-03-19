@@ -468,7 +468,10 @@ function rssmi_feed_list_view_link( $actions, $post ) {
 		unset( $actions['view'] );
 		unset( $actions['inline hide-if-no-js'] ); //  remove quick edit
 		//	$actions['rssmi_fetch_items'] = '<a  href="javascript:;" pid="'.$post->ID.'" class="rssmi-fetch-items-now" >' . __('Delete Items') . '</a>';
-		$actions['rssmi_delete_items'] = '<a  href="' . $_SERVER['REQUEST_URI'] . $dismiss_link_joiner . 'rssmi_delete_items=' . $post->ID . '" class="rssmi-fetch-items-now" >' . __( 'Delete Items' ) . '</a>';
+		// $actions['rssmi_delete_items'] = '<a  href="' . $_SERVER['REQUEST_URI'] . $dismiss_link_joiner . 'rssmi_delete_items=' . $post->ID . '" class="rssmi-fetch-items-now" >' . __( 'Delete Items' ) . '</a>';
+		$delete_items_url_bare = $_SERVER['REQUEST_URI'] . $dismiss_link_joiner . 'rssmi_delete_items=' . $post->ID;
+		$delete_items_url_nonce = wp_nonce_url($delete_items_url_bare, 'rssmi-delete-items_'.$post->ID);
+		$actions['rssmi_delete_items'] = '<a  href="' . $delete_items_url_nonce . '" class="rssmi-fetch-items-now">' . __( 'Delete Items' ) . '</a>';
 		$actions['rssmi_view_items']   = '<a  href="' . admin_url() . 'edit.php?post_type=rssmi_feed_item&rssmi_feed_id=' . $post->ID . '" >' . __( 'View Items' ) . '</a>';
 	}
 	return $actions;
@@ -479,6 +482,7 @@ add_action( 'admin_init', 'rssmi_check_delete_items' );
 function rssmi_check_delete_items() {
 	if ( isset( $_GET['rssmi_delete_items'] ) && ! empty( $_GET['rssmi_delete_items'] ) ) {
 		$feed_id = $_GET['rssmi_delete_items'];
+		check_admin_referer( 'rssmi-delete-items_'.$feed_id );
 		rssmi_on_delete( $feed_id );
 		$page = isset( $_GET['paged'] ) ? '&paged=' . $_GET['paged'] : '';
 		header( 'Location: ' . admin_url( 'edit.php?post_type=rssmi_feed' . $page ) );
