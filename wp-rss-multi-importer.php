@@ -10,7 +10,7 @@
 
 
 /* Set the version number of the plugin. */
-define( 'WP_RSS_MULTI_VERSION', 3.13 );
+define( 'WP_RSS_MULTI_VERSION', 3.14 );
 
 /* Set constant path to the plugin directory. */
 define( 'WP_RSS_MULTI_PATH', plugin_dir_path( __FILE__ ) );
